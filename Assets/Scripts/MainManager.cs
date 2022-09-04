@@ -11,6 +11,7 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text highScore;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -36,6 +37,8 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        ScoreText.text = DataManagement.instance.playerName + $" Score : {m_Points}";
+        SetHighScore();
     }
 
     private void Update()
@@ -65,12 +68,24 @@ public class MainManager : MonoBehaviour
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+        
+        ScoreText.text = DataManagement.instance.playerName + $" Score : {m_Points}";
     }
 
     public void GameOver()
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        if (m_Points > DataManagement.instance.highScore)
+        {
+            DataManagement.instance.highScore = m_Points;
+            DataManagement.instance.bestPlayer = DataManagement.instance.playerName;
+            DataManagement.instance.SaveData();
+        }
+    }
+
+    public void SetHighScore()
+    {
+        highScore.text = "Best Score: " + DataManagement.instance.bestPlayer + ": " + DataManagement.instance.highScore;
     }
 }
